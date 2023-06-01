@@ -21,6 +21,13 @@ module.exports.consultarProductos = async (req, res) => {
     res.json(resultado)
 }
 
+module.exports.consultarProductosR = async (req, res) => {
+    const conexion = await obtenerConexion();
+    const resultado = await conexion.query('SELECT * FROM productos WHERE productos.estado = 1');
+    console.log(resultado)
+    res.json(resultado)
+}
+
 module.exports.actualizarProductos = async (req, res) => {
     try {
         
@@ -71,3 +78,72 @@ module.exports.actualizarProveedores = async (req, res) => {
         console.log(error.message)
     }
 }
+
+module.exports.agregarRecepcion = async (req, res) => {
+    try {
+        
+        const datos = JSON.parse(JSON.stringify(req.body));
+        const {date, producto, proveedor, numFactura, cantidad, lote, recInvima, vencimiento, descripcion} = datos;
+        const conexion = await obtenerConexion();
+        const resultado = await conexion.query("INSERT INTO recepciones (id, date, producto, proveedor, numFactura, cantidad, lote, regInvima, vencimiento, descripcion) VALUES ('','"+date+"', '"+producto+"', '"+proveedor+"', '"+numFactura+"', '"+cantidad+"', '"+lote+"', '"+recInvima+"', '"+vencimiento+"', '"+descripcion+"')")
+        
+        res.json({message : "Recepcion agregada"})
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+module.exports.consultarRecepciones = async (req, res) => {
+    const conexion = await obtenerConexion();
+    const resultado = await conexion.query('SELECT * FROM recepciones');
+    console.log(resultado)
+    res.json(resultado)
+}
+
+module.exports.actualizarRecepciones = async (req, res) => {
+    try {
+        
+        const datos = JSON.parse(JSON.stringify(req.body));
+        const {id, producto, proveedor, numFactura, cantidad, lote, recInvima, vencimiento, descripcion} = datos;
+        const conexion = await obtenerConexion();
+        const s = await conexion.query("UPDATE recepciones SET producto = '"+producto+"', proveedor = '"+proveedor+"', numFactura = '"+numFactura+"', cantidad = '"+cantidad+"', lote = '"+lote+"', regInvima = '"+recInvima+"', vencimiento = '"+vencimiento+"', descripcion = '"+vencimiento+"' WHERE recepciones.id = '"+id+"'")
+        res.json({message : "Producto actualizado"})
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+module.exports.eliminarProveedor = async (req, res) => {
+    const {id} = JSON.parse(JSON.stringify(req.body));
+    const conexion = await obtenerConexion();
+    console.log('desde contr '+id)
+    const resultado = await conexion.query(`DELETE FROM proveedores WHERE proveedores.id = ${id}`);
+    console.log(resultado)
+    res.json(resultado)
+}
+
+module.exports.eliminarProducto = async (req, res) => {
+    const {codigo} = JSON.parse(JSON.stringify(req.body));
+    const conexion = await obtenerConexion();
+    console.log('desde contr '+codigo)
+    const resultado = await conexion.query(`DELETE FROM productos WHERE productos.codigo = ${codigo}`);
+    console.log(resultado)
+    res.json(resultado)
+}
+
+module.exports.eliminarRecepcion = async (req, res) => {
+    const {id} = JSON.parse(JSON.stringify(req.body));
+    const conexion = await obtenerConexion();
+    console.log('desde contr '+id)
+    const resultado = await conexion.query(`DELETE FROM recepciones WHERE recepciones.id = ${id}`);
+    console.log(resultado)
+    res.json(resultado)
+}
+
+
+
+
+
+
